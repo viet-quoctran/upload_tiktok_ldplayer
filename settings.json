@@ -1,0 +1,40 @@
+{
+    "ldplayer_path": "D:\\LDPlayer\\LDPlayer9\\ldconsole.exe",
+    "local_base_path": "D:\\video",
+    "groups": [
+        {
+            "name": "JP",
+            "schedule_time": "02:34",
+            "devices": [
+                {
+                    "index": 0,
+                    "serial": "emulator-5554",
+                    "video_count": 1,
+                    "video_not_post": 1
+                },
+                {
+                    "index": 1,
+                    "serial": "emulator-5556",
+                    "video_count": 2,
+                    "video_not_post": 2
+                }
+            ],
+            "is_scheduler": true,
+            "max_threads": 1
+        },
+        {
+            "name": "US",
+            "schedule_time": "02:31",
+            "devices": [
+                {
+                    "index": 2,
+                    "serial": "emulator-5558",
+                    "video_count": 0,
+                    "video_not_post": 0
+                }
+            ],
+            "is_scheduler": true,
+            "max_threads": 1
+        }
+    ]
+}
