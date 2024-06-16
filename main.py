@@ -100,9 +100,11 @@ def swipe_up(d):
     # Perform random swipes
     swipe_count = random.randint(3, 5)
     for _ in range(swipe_count):
-        d.swipe(start_x, start_y, end_x, end_y)
-        sleep_time = random.uniform(5, 10)
+        d.swipe(start_x, start_y, end_x, end_y, duration=0.1)  # Adjust duration for faster swipe
+        sleep_time = random.uniform(1, 2)  # Reduce sleep time for faster action
         time.sleep(sleep_time)  # Add a delay to simulate human interaction
+
+
 
 def check_and_restore(d):
     # Check if the "Restore" button is present and click it if so

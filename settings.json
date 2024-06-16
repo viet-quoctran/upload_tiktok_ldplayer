@@ -4,7 +4,7 @@
     "groups": [
         {
             "name": "JP",
-            "schedule_time": "14:15",
+            "schedule_time": "16:44",
             "devices": [
                 {
                     "index": 0,
@@ -20,7 +20,7 @@
                 }
             ],
             "is_scheduler": true,
-            "max_threads": 1
+            "max_threads": 2
         },
         {
             "name": "US",
