@@ -1,0 +1,4 @@
+uiautomator2
+icecream
+schedule
+PyQt5

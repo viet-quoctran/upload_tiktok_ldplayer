@@ -4,18 +4,18 @@
     "groups": [
         {
             "name": "JP",
-            "schedule_time": "02:34",
+            "schedule_time": "14:15",
             "devices": [
                 {
                     "index": 0,
                     "serial": "emulator-5554",
                     "video_count": 1,
-                    "video_not_post": 1
+                    "video_not_post": 2
                 },
                 {
                     "index": 1,
                     "serial": "emulator-5556",
-                    "video_count": 2,
+                    "video_count": 1,
                     "video_not_post": 2
                 }
             ],
@@ -24,13 +24,13 @@
         },
         {
             "name": "US",
-            "schedule_time": "02:31",
+            "schedule_time": "14:15",
             "devices": [
                 {
                     "index": 2,
                     "serial": "emulator-5558",
-                    "video_count": 0,
-                    "video_not_post": 0
+                    "video_count": 1,
+                    "video_not_post": 2
                 }
             ],
             "is_scheduler": true,

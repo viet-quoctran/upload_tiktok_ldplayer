@@ -85,12 +85,47 @@ def send_keys_slowly(d, text):
         d.send_keys(char)
         time.sleep(random.uniform(TYPE_DELAY_MIN, TYPE_DELAY_MAX))
 
+def swipe_up(d):
+    # Get the screen size
+    size = d.window_size()
+    width = size[0]
+    height = size[1]
+
+    # Calculate the start and end points for the swipe
+    start_x = width // 2
+    start_y = height * 3 // 4
+    end_x = width // 2
+    end_y = height // 4
+
+    # Perform random swipes
+    swipe_count = random.randint(3, 5)
+    for _ in range(swipe_count):
+        d.swipe(start_x, start_y, end_x, end_y)
+        sleep_time = random.uniform(5, 10)
+        time.sleep(sleep_time)  # Add a delay to simulate human interaction
+
+def check_and_restore(d):
+    # Check if the "Restore" button is present and click it if so
+    if d(text="Restore").exists:
+        d(text="Restore").click()
+        print("Clicked 'Restore' button")
+        time.sleep(5)  # Wait for the restore process to complete
+
+def perform_action(d, action, *args, **kwargs):
+    # Perform the action
+    action(*args, **kwargs)
+    # Check and restore if needed
+    check_and_restore(d)
+
 def automate_device(index, serial, local_base_path, video_count):
-    try:
-        d = u2.connect_usb(serial)
-    except Exception as e:
-        print(f"Failed to connect to device {serial} with error: {e}")
-        return
+    while True:
+        try:
+            d = u2.connect_usb(serial)
+            ic(f"Successfully connected to device {serial}")
+            break
+        except Exception as e:
+            ic(f"Failed to connect to device {serial} with error: {e}. Retrying in 10 seconds...")
+            time.sleep(10)  # Wait before retrying
 
     for _ in range(video_count):
         pushed_video_name, remote_base_path = push_video(d, index, local_base_path)
@@ -106,23 +141,25 @@ def automate_device(index, serial, local_base_path, video_count):
 
         while True:
             try:
-                d(text=TIKTOK_UI['tiktok_icon']['text']).click()
+                perform_action(d, lambda: d(text=TIKTOK_UI['tiktok_icon']['text']).click())
+                time.sleep(60)
+
+                swipe_up(d)
+                
+                perform_action(d, lambda: d.xpath(TIKTOK_UI['first_element']).click())
                 time.sleep(5)
 
-                d.xpath(TIKTOK_UI['first_element']).click()
+                perform_action(d, lambda: d.xpath(TIKTOK_UI['second_element']).click())
                 time.sleep(5)
 
-                d.xpath(TIKTOK_UI['second_element']).click()
+                perform_action(d, lambda: d.xpath(TIKTOK_UI['third_element']).click())
                 time.sleep(5)
 
-                d.xpath(TIKTOK_UI['third_element']).click()
+                perform_action(d, lambda: d.xpath(TIKTOK_UI['fourth_element']).click())
                 time.sleep(5)
-
-                d.xpath(TIKTOK_UI['fourth_element']).click()
+                perform_action(d, lambda: d(resourceId=TIKTOK_UI['input_box']['resourceId']).click())
                 time.sleep(5)
-                d(resourceId=TIKTOK_UI['input_box']['resourceId']).click()
-                time.sleep(5)
-                d(resourceId=TIKTOK_UI['submit_button']['resourceId']).click()
+                perform_action(d, lambda: d(resourceId=TIKTOK_UI['submit_button']['resourceId']).click())
                 time.sleep(5)
                 send_keys_slowly(d, pushed_video_name.split('.')[0])
                 break
@@ -167,12 +204,28 @@ def should_run_now(schedule_time):
     scheduled_time = datetime.datetime.strptime(schedule_time, "%H:%M").time()
     return current_time.hour == scheduled_time.hour and current_time.minute == scheduled_time.minute
 
-if __name__ == "__main__":
+def run_scheduled_automations():
     while True:
         with open(CONFIG_FILE, 'r') as file:
             config = json.load(file)
             groups = config.get('groups', [])
-            for group in groups:
-                if group["is_scheduler"] and should_run_now(group["schedule_time"]):
-                    run_automation(group)
-        time.sleep(60)  # Kiểm tra lại mỗi phút
+            current_time = datetime.datetime.now().time()
+
+            # Find groups that should run now
+            groups_to_run = [group for group in groups if group["is_scheduler"] and should_run_now(group["schedule_time"])]
+
+            # Run each group in a separate thread
+            threads = []
+            for group in groups_to_run:
+                thread = threading.Thread(target=run_automation, args=(group,))
+                threads.append(thread)
+                thread.start()
+
+            # Wait for all threads to complete
+            for thread in threads:
+                thread.join()
+
+        time.sleep(60)  # Check again every minute
+
+if __name__ == "__main__":
+    run_scheduled_automations()
